@@ -1,0 +1,123 @@
+# HOW TO USE:
+# - - - - - - - - - - - - - - - - - - - - - - - - #
+# $ docker-compose up
+# - - - - - - - - - - - - - - - - - - - - - - - - #
+
+version: '3.8'
+services:
+  frontend:
+    container_name: workery-front
+    restart: unless-stopped
+    build:
+        context: .
+        dockerfile: frontend.Dockerfile
+        args:
+          - REACT_APP_API_HOST=http://localhost:10000
+          - REACT_APP_API_DOMAIN=localhost:10000
+          - REACT_APP_API_PROTOCOL=http
+          - REACT_APP_WWW_DOMAIN=localhost:10001
+          - REACT_APP_WWW_PROTOCOL=http
+          - REACT_APP_IMAGE_UPLOAD_MAX_FILESIZE_IN_BYTES=10485760
+          - REACT_APP_IMAGE_UPLOAD_MAX_FILESIZE_ERROR_MESSAGE="File is too large. The maximum size is 10 MB."
+    links:
+      - backend
+      - postgresdb
+      - bleve-server
+      - redis
+    depends_on:
+      - backend
+      - postgresdb
+      - bleve-server
+      - redis
+    ports:
+        - '10001:80'
+
+  backend:
+    container_name: workery-backend
+    restart: unless-stopped
+    stdin_open: true
+    environment:
+        WORKERY_DB_HOST: postgresdb
+        WORKERY_DB_PORT: 5432
+        WORKERY_DB_USER: ${WORKERY_DB_USER}
+        WORKERY_DB_PASSWORD: ${WORKERY_DB_PASSWORD}
+        WORKERY_DB_NAME: ${WORKERY_DB_NAME}
+        WORKERY_APP_IP: 0.0.0.0
+        WORKERY_APP_PORT: 8000
+        WORKERY_APP_REDIS_ADDRESS: redis:6379
+        WORKERY_APP_SIGNING_KEY: ${WORKERY_APP_SIGNING_KEY}
+        WORKERY_AWS_S3_ACCESS_KEY: ${WORKERY_AWS_S3_ACCESS_KEY}
+        WORKERY_AWS_S3_SECRET_KEY: ${WORKERY_AWS_S3_SECRET_KEY}
+        WORKERY_AWS_S3_ENDPOINT: ${WORKERY_AWS_S3_ENDPOINT}
+        WORKERY_AWS_S3_REGION: ${WORKERY_AWS_S3_REGION}
+        WORKERY_AWS_S3_BUCKET_NAME: ${WORKERY_AWS_S3_BUCKET_NAME}
+        WORKERY_BLEVE_SERVER_ADDRESS: bleve-server:8001
+    build:
+      dockerfile: backend.Dockerfile
+    links:
+      - postgresdb
+      - bleve-server
+      - redis
+    depends_on:
+      - postgresdb
+      - bleve-server
+      - redis
+    ports:
+      - "10000:8000"
+
+  bleve-server:
+      container_name: workery-bleve-server
+      image: bmika/bleve-server:1.0 # Note: https://hub.docker.com/r/bmika/bleve-server
+      environment:
+        BLEVE_SERVER_ADDRESS: 0.0.0.0:8001
+        BLEVE_SERVER_HOME_DIRECTORY_PATH: /db
+      volumes:
+        - bleve_data:/db
+
+  postgresdb:
+      container_name: workery-postgres
+      image: postgres:14.3-alpine
+      restart: unless-stopped
+      environment:
+          POSTGRES_PASSWORD: ${WORKERY_DB_PASSWORD}
+          POSTGRES_USER: ${WORKERY_DB_USER}
+          POSTGRES_DB: ${WORKERY_DB_NAME}
+      volumes:
+          # DEVELOPERS NOTE: We want persistance of our postgres server so here
+          # is where we will save our data.
+          - db_data:/var/lib/postgresql/data
+
+  redis:
+      container_name: workery-redis
+      image: redis:7.0.0-alpine
+      restart: unless-stopped
+      volumes:
+          - redis_data:/data
+          - redis_config:/usr/local/etc/redis/redis.conf
+
+  pgadmin:
+      # HOWTO: Setup PgAdmin Docker via  https://hevodata.com/learn/pgadmin-docker/
+      # How to access, in your browser run: http://127.0.0.1:8080
+      container_name: workery-pgadmin4
+      image: dpage/pgadmin4:6.11 # Note: https://hub.docker.com/r/dpage/pgadmin4
+      restart: always
+      logging:
+        driver: "none" # We don't want to see any logs from this container.
+      environment:
+        PGADMIN_DEFAULT_EMAIL: admin@admin.com  # For developer purposes, keep it simple b/c it's local on the developers machine.
+        PGADMIN_DEFAULT_PASSWORD: secret
+        PGADMIN_LISTEN_PORT: 80
+        GUNICORN_ACCESS_LOGFILE: /dev/null # We don't want to see any logs from this container.
+      ports:
+        - "8080:80"
+      volumes:
+        - pgadmin_data:/var/lib/pgadmin
+      depends_on:
+        - postgresdb
+
+volumes:
+    bleve_data:
+    db_data:
+    redis_data:
+    redis_config:
+    pgadmin_data:

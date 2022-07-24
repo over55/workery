@@ -1,0 +1,6 @@
+[submodule "workery-server"]
+	path = workery-server
+	url = git@github.com:over55/workery-server.git
+[submodule "workery-front"]
+	path = workery-front
+	url = git@github.com:over55/workery-front.git

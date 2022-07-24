@@ -1,0 +1,9 @@
+bin
+.dockerignore
+Dockerfile
+backend.Dockerfile
+frontend.Dockerfile
+docker-compose.yml
+node_modules
+build
+.env
