@@ -1,0 +1,14 @@
+version: '3'
+
+tasks:
+  start:
+    cmds:
+      - docker-compose -f docker-compose.yml up
+
+  end:
+    cmds:
+      - docker-compose -f docker-compose.yml down
+
+  backend_console:
+    cmds:
+      - docker exec -it workery_backend bash
