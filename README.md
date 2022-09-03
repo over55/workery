@@ -1,11 +1,13 @@
 # Workery
 **Project still under active development - use at your own risk**
 
+TODO LOGO
+
 Workery is a multi-tenanted associate and customer management web-app.
 
 TODO SCREENSHOTS
 
-## Purpose
+## Features
 TODO
 
 ## Installation
@@ -90,15 +92,9 @@ Workery can be installed on all operating systems supporting [Docker](https://ww
 
 10. In your favourite browser, go to [http://localhost:10001](http://localhost:10001). If you see a login page, congratulations you've setup `workery`. Please login with the *root administrator* user you created earlier.
 
-## Reference
-### Environments
-There are are three environments depending on what you want to do: (a) self-hosted (b) developer (c) production.
+## Documentation
 
-If you want to run a self-hosted instance on your machine then please follow these [instructions above](#Installation).
-
-If you want the project setup on your machine so you can contribute new code then please follow the [**Developer Installation**](/docs/dev/installation.md).
-
-If you own a domain and you want to run in a virtual private server like a DigitalOcean "droplet" then please follow these instructions. We are using [theworkery.cloud](https://theworkery.cloud/api/v1/version) domain in the instructions so you'll need to replace this value with your own. To begin please follow the [**Production Installation**](/docs/prod/installation.md).
+See [here](/docs/README.md).
 
 ## Contributing
 
