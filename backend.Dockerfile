@@ -5,22 +5,22 @@ FROM golang:1.18-alpine
 RUN mkdir /app
 
 # Copy all files from the current directory to the app directory
-COPY ./workery-server /app
+COPY ./workery-backend /app
 
 # Set working directory
 WORKDIR /app
 
 # Run command as described:
 # go build will build an executable file named server in the current directory
-RUN go build -o workery-server .
+RUN go build -o workery-backend .
 
 EXPOSE 8000
 
 # Run the server executable
-CMD [ "/app/workery-server", "serve" ]
+CMD [ "/app/workery-backend", "serve" ]
 
 ## BUILD
-## docker build --rm -t workery-server .
+## docker build --rm -t workery-backend .
 
 ## EXECUTE
-## docker run -d -p 8000:8000 workery-server
+## docker run -d -p 8000:8000 workery-backend

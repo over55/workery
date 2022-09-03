@@ -6,19 +6,10 @@
 version: '3.8'
 services:
   frontend:
-    container_name: workery-front
+    container_name: workery-frontend
+    image: "over55/workery-frontend:selfhost-latest"
+    stdin_open: true
     restart: unless-stopped
-    build:
-        context: .
-        dockerfile: frontend.Dockerfile
-        args:
-          - REACT_APP_API_HOST=http://localhost:10000
-          - REACT_APP_API_DOMAIN=localhost:10000
-          - REACT_APP_API_PROTOCOL=http
-          - REACT_APP_WWW_DOMAIN=localhost:10001
-          - REACT_APP_WWW_PROTOCOL=http
-          - REACT_APP_IMAGE_UPLOAD_MAX_FILESIZE_IN_BYTES=10485760
-          - REACT_APP_IMAGE_UPLOAD_MAX_FILESIZE_ERROR_MESSAGE="File is too large. The maximum size is 10 MB."
     links:
       - backend
       - postgresdb
@@ -33,7 +24,8 @@ services:
         - '10001:80'
 
   backend:
-    container_name: workery-backend
+    container_name: workery_backend_app
+    image: over55/workery-backend:latest
     restart: unless-stopped
     stdin_open: true
     environment:
@@ -46,14 +38,13 @@ services:
         WORKERY_APP_PORT: 8000
         WORKERY_APP_REDIS_ADDRESS: redis:6379
         WORKERY_APP_SIGNING_KEY: ${WORKERY_APP_SIGNING_KEY}
+        WORKERY_APP_HAS_AUTO_MIGRATIONS: ${WORKERY_APP_HAS_AUTO_MIGRATIONS}
         WORKERY_AWS_S3_ACCESS_KEY: ${WORKERY_AWS_S3_ACCESS_KEY}
         WORKERY_AWS_S3_SECRET_KEY: ${WORKERY_AWS_S3_SECRET_KEY}
         WORKERY_AWS_S3_ENDPOINT: ${WORKERY_AWS_S3_ENDPOINT}
         WORKERY_AWS_S3_REGION: ${WORKERY_AWS_S3_REGION}
         WORKERY_AWS_S3_BUCKET_NAME: ${WORKERY_AWS_S3_BUCKET_NAME}
         WORKERY_BLEVE_SERVER_ADDRESS: bleve-server:8001
-    build:
-      dockerfile: backend.Dockerfile
     links:
       - postgresdb
       - bleve-server
