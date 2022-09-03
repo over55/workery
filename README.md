@@ -105,4 +105,4 @@ If you own a domain and you want to run in a virtual private server like a Digit
 Found a bug? Want a feature to improve the package? Please create an [issue](https://github.com/over55/workery/issues).
 
 ## License
-This application is licensed under the **AGPL License**. See [LICENSE](LICENSE) for more information.
+This application is licensed under the **GNU Affero General Public License v3.0**. See [LICENSE](LICENSE) for more information.
