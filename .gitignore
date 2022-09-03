@@ -197,6 +197,7 @@ data
 # Do not share developer's private notebook
 private.md
 todo.md
+private
 
 # Executable
 bin/

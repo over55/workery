@@ -9,6 +9,6 @@ tasks:
     cmds:
       - docker-compose -f docker-compose.yml down
 
-  backend_console:
+  console:
     cmds:
       - docker exec -it workery_backend bash
